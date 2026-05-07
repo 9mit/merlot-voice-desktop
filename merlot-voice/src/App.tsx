@@ -26,11 +26,13 @@ function App() {
   } = useFileManager();
 
   // Auto-create a file if none exist
+  const hasAutoCreated = useRef(false);
   useEffect(() => {
-    if (files.length === 0) {
+    if (files.length === 0 && !hasAutoCreated.current) {
+      hasAutoCreated.current = true;
       createFile("My First Note");
     }
-  }, []);
+  }, [files.length, createFile]);
 
   // When transcript updates (final text), append it to the active file
   const prevTranscriptRef = useRef("");
