@@ -1,11 +1,11 @@
 // src/hooks/useTranscription.ts
-// Updated to use MediaRecorder
+// Updated to use MediaRecorder and async token fetching
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { getMicrophoneStream, createMediaRecorder } from "../services/audioService";
 import { createDeepgramSocket, parseTranscript } from "../services/deepgramService";
 
-export const useTranscription = (apiKey: string | undefined) => {
+export const useTranscription = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState("");
@@ -56,11 +56,6 @@ export const useTranscription = (apiKey: string | undefined) => {
   }, [cleanup]);
 
   const startRecording = useCallback(async () => {
-    if (!apiKey) {
-      setError("API Key is missing. Check your .env file.");
-      return;
-    }
-
     if (isRecording) return;
 
     // Reset state
@@ -70,8 +65,8 @@ export const useTranscription = (apiKey: string | undefined) => {
     try {
       console.log("Starting recording...");
 
-      // 1. Create WebSocket to Deepgram
-      const socket = createDeepgramSocket(apiKey);
+      // 1. Create WebSocket to Deepgram (fetches token internally)
+      const socket = await createDeepgramSocket();
       socketRef.current = socket;
 
       // 2. Handle socket open - then start microphone
@@ -151,7 +146,7 @@ export const useTranscription = (apiKey: string | undefined) => {
       setError(e.message || "An unexpected error occurred.");
       cleanup();
     }
-  }, [apiKey, isRecording, stopRecording, cleanup]);
+  }, [isRecording, stopRecording, cleanup]);
 
   // Cleanup on unmount
   useEffect(() => {

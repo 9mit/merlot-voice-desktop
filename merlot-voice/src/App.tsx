@@ -5,7 +5,6 @@ import { setupPushToTalkListeners, injectText } from "./services/pushToTalkServi
 import { Mic, Square, Copy, Trash2, Check, Sparkles, Keyboard, Send } from "lucide-react";
 
 function App() {
-  const apiKey = import.meta.env.VITE_DEEPGRAM_API_KEY;
   const [copied, setCopied] = useState(false);
   const [isInserting, setIsInserting] = useState(false);
   const [isPTTMode, setIsPTTMode] = useState(false);
@@ -19,7 +18,7 @@ function App() {
     startRecording,
     stopRecording,
     clearTranscript,
-  } = useTranscription(apiKey);
+  } = useTranscription();
 
   // Track transcript for PTT injection
   const transcriptRef = useRef(transcript);
@@ -69,15 +68,11 @@ function App() {
 
   // Handle PTT start
   const handlePTTStart = useCallback(() => {
-    if (!apiKey) {
-      console.log("PTT: No API key, cannot start");
-      return;
-    }
     console.log("PTT: Start triggered, starting recording...");
     setPttStatus("recording");
     clearTranscript();
     startRecording();
-  }, [apiKey, startRecording, clearTranscript]);
+  }, [startRecording, clearTranscript]);
 
   // Setup push-to-talk listeners on mount
   useEffect(() => {
@@ -243,7 +238,6 @@ function App() {
           {/* Record Button */}
           <button
             onClick={handleToggleRecording}
-            disabled={!apiKey}
             className={`relative w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all duration-300 shadow-xl btn ${isRecording
               ? "bg-gradient-to-br from-[#881337] to-[#4c0519] border-rose-700 scale-95 animate-pulse-glow"
               : "bg-gradient-to-br from-[#2a060b] to-[#3f0914] border-rose-900/30 hover:border-rose-700/50 hover:scale-105"
@@ -300,13 +294,6 @@ function App() {
             )}
           </button>
         </div>
-
-        {/* API Key Warning */}
-        {!apiKey && (
-          <div className="text-xs text-rose-200/40">
-            ⚠️ No API key configured in .env file
-          </div>
-        )}
       </footer>
     </div>
   );

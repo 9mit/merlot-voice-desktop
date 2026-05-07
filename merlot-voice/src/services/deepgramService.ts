@@ -1,13 +1,31 @@
 // src/services/deepgramService.ts
-// Fixed version based on working reference code
 
-export const createDeepgramSocket = (apiKey: string): WebSocket => {
+export const fetchTemporaryToken = async (): Promise<string | null> => {
+  try {
+    // Attempt to fetch from our secure Netlify Function proxy
+    const res = await fetch("/.netlify/functions/deepgram-token");
+    if (!res.ok) {
+      console.warn("Failed to fetch temporary token from backend, falling back to local env key if available.");
+      return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
+    }
+    const data = await res.json();
+    return data.token;
+  } catch (err) {
+    console.error("Error fetching Deepgram token:", err);
+    // Fallback to local development key
+    return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
+  }
+};
+
+export const createDeepgramSocket = async (): Promise<WebSocket> => {
+  const apiKey = await fetchTemporaryToken();
+
+  if (!apiKey) {
+    throw new Error("No Deepgram API key available. Please configure the backend or .env file.");
+  }
+
   // 1. Clean the API key (remove quotes, spaces, newlines)
   const cleanKey = apiKey.trim().replace(/^['"]+|['"]+$/g, '');
-
-  if (!cleanKey) {
-    throw new Error("API Key is empty after cleanup");
-  }
 
   console.log(`[Deepgram] Connecting with Key (Length: ${cleanKey.length})`);
 
