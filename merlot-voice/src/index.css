@@ -126,3 +126,37 @@ button {
   -webkit-user-drag: none;
   user-select: none;
 }
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Textarea notepad styles */
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(136, 19, 55, 0.3) transparent;
+}
+
+textarea::placeholder {
+  font-style: italic;
+}
+
+/* Mobile sidebar animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.md\:hidden .animate-fade-in {
+  animation: slideIn 0.25s ease-out;
+}
