@@ -120,7 +120,7 @@ function App() {
   };
 
   return (
-    <div className="relative flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#0a0103] via-[#1a0308] to-[#0a0103]">
+    <div className="relative flex flex-col h-[100dvh] overflow-hidden bg-gradient-to-br from-[#0a0103] via-[#1a0308] to-[#0a0103]">
 
       {/* Ambient Background Effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#4a0412]/20 rounded-full blur-[128px] pointer-events-none animate-pulse" style={{ animationDuration: '4s' }} />
