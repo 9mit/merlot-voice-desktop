@@ -28,12 +28,12 @@ const NotepadEditor: React.FC<NotepadEditorProps> = ({
 
   if (!file) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-rose-900/10 to-rose-950/10 flex items-center justify-center mb-6 border border-rose-900/10">
-          <FileText className="w-12 h-12 text-rose-900/20" />
+      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-white/50">
+        <div className="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 border border-blue-100">
+          <FileText className="w-10 h-10 text-blue-300" />
         </div>
-        <h3 className="text-lg font-medium text-rose-100/40 mb-2">No Note Selected</h3>
-        <p className="text-sm text-rose-200/20 max-w-xs">Create a new note from the sidebar to start capturing your voice.</p>
+        <h3 className="text-lg font-semibold text-slate-500 mb-2">No Note Selected</h3>
+        <p className="text-sm text-slate-400 max-w-xs">Create a new note from the sidebar to start capturing your voice.</p>
       </div>
     );
   }
@@ -42,26 +42,26 @@ const NotepadEditor: React.FC<NotepadEditorProps> = ({
   const charCount = file.content.length;
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden bg-white/50">
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-rose-500/10 glass">
+      <div className="flex items-center justify-between px-5 md:px-6 py-2.5 border-b border-slate-100 bg-white/80 backdrop-blur-sm">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <FileText className="w-4 h-4 text-rose-400/40 shrink-0" />
-            <h2 className="text-sm font-medium text-rose-100/70 truncate">{file.name}</h2>
+            <FileText className="w-4 h-4 text-blue-400 shrink-0" />
+            <h2 className="text-sm font-semibold text-slate-700 truncate">{file.name}</h2>
           </div>
           {isRecording && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-900/30 rounded-full border border-rose-500/20 animate-fade-in shrink-0">
-              <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-medium text-rose-300 uppercase tracking-wider">Live</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 rounded-full border border-red-200 animate-fade-in shrink-0">
+              <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">Live</span>
             </div>
           )}
         </div>
-        <div className="flex items-center gap-1 shrink-0">
-          <button onClick={onCopy} disabled={!file.content} className="p-2 hover:bg-white/5 rounded-lg text-rose-200/30 hover:text-rose-300 transition-all disabled:opacity-20" title="Copy all">
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+        <div className="flex items-center gap-0.5 shrink-0">
+          <button onClick={onCopy} disabled={!file.content} className="p-2 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all disabled:opacity-25 disabled:hover:bg-transparent" title="Copy all">
+            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
           </button>
-          <button onClick={() => onDownload(file.id)} disabled={!file.content} className="p-2 hover:bg-white/5 rounded-lg text-rose-200/30 hover:text-rose-300 transition-all disabled:opacity-20" title="Download as .txt">
+          <button onClick={() => onDownload(file.id)} disabled={!file.content} className="p-2 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all disabled:opacity-25 disabled:hover:bg-transparent" title="Download as .txt">
             <Download className="w-4 h-4" />
           </button>
         </div>
@@ -73,10 +73,8 @@ const NotepadEditor: React.FC<NotepadEditorProps> = ({
           ref={textareaRef}
           value={file.content + (interimTranscript ? (file.content ? " " : "") + interimTranscript : "")}
           onChange={(e) => {
-            // Only update content (exclude interim text from the saved content)
             const newVal = e.target.value;
             if (interimTranscript) {
-              // Strip the interim part before saving
               const interimStart = newVal.lastIndexOf(interimTranscript);
               if (interimStart >= 0) {
                 onContentChange(file.id, newVal.substring(0, interimStart).trimEnd());
@@ -88,23 +86,23 @@ const NotepadEditor: React.FC<NotepadEditorProps> = ({
             }
           }}
           placeholder="Start speaking or type here..."
-          className="w-full h-full resize-none bg-transparent text-rose-50/90 text-base leading-[1.9] p-6 md:p-8 outline-none placeholder:text-rose-200/15 font-light tracking-wide selection:bg-rose-500/30"
+          className="w-full h-full resize-none bg-transparent text-slate-800 text-[15px] leading-[2] p-5 md:p-8 outline-none placeholder:text-slate-300 font-normal tracking-[0.01em] selection:bg-blue-100"
           spellCheck={false}
           style={{ fontFamily: "'Inter', sans-serif" }}
         />
-        {/* Interim text highlight overlay - subtle visual cue */}
+        {/* Listening indicator */}
         {interimTranscript && (
-          <div className="absolute bottom-4 left-6 md:left-8 right-6 md:right-8 pointer-events-none">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-500/10 rounded-lg border border-rose-500/10">
-              <Mic className="w-3 h-3 text-rose-400/50 animate-pulse" />
-              <span className="text-[10px] text-rose-300/40 font-medium">Listening...</span>
+          <div className="absolute bottom-4 left-5 md:left-8 pointer-events-none">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 rounded-full border border-blue-200 shadow-sm">
+              <Mic className="w-3 h-3 text-blue-500 animate-pulse" />
+              <span className="text-[10px] text-blue-600 font-semibold tracking-wide">Listening...</span>
             </div>
           </div>
         )}
       </div>
 
       {/* Status Bar */}
-      <div className="flex items-center justify-between px-6 py-2 border-t border-rose-500/10 text-[10px] text-rose-200/20 font-medium tracking-wide">
+      <div className="flex items-center justify-between px-5 md:px-6 py-2 border-t border-slate-100 text-[10px] text-slate-400 font-medium tracking-wide bg-white/60">
         <div className="flex items-center gap-4">
           <span>{wordCount} words</span>
           <span>{charCount} chars</span>
