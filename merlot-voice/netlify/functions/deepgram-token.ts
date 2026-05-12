@@ -1,4 +1,4 @@
-import { createClient } from "@deepgram/sdk";
+import { DeepgramClient } from "@deepgram/sdk";
 import type { Handler, HandlerEvent } from "@netlify/functions";
 
 // Simple in-memory rate limiter (per Netlify function instance)
@@ -48,17 +48,17 @@ const handler: Handler = async (event: HandlerEvent) => {
   }
 
   try {
-    const deepgram = createClient(apiKey);
+    const deepgram = new DeepgramClient({ apiKey });
 
     // Create a temporary project key that expires in 60 seconds.
-    const { result, error } = await deepgram.manage.createProjectKey(projectId, {
+    const result = await deepgram.manage.v1.projects.keys.create(projectId, {
       comment: "Temp frontend key",
       scopes: ["usage:write"],
       time_to_live_in_seconds: 60,
     });
 
-    if (error) {
-      console.error("Deepgram token error:", error);
+    if (!result || !result.key) {
+      console.error("Deepgram token error: No key returned");
       return { statusCode: 500, body: JSON.stringify({ error: "Token generation failed" }) };
     }
 
