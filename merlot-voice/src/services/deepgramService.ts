@@ -30,7 +30,7 @@ export const createDeepgramSocket = async (): Promise<WebSocket> => {
   const cleanKey = apiKey.trim().replace(/^['"]+|['"]+$/g, '');
 
   // Use subprotocol-based auth (keeps key out of the URL / network tab address bar)
-  const url = `wss://api.deepgram.com/v1/listen?punctuate=true&smart_format=true&model=nova-2&language=en-US`;
+  const url = `wss://api.deepgram.com/v1/listen?punctuate=true&smart_format=true&model=nova-2&language=en-US&interim_results=true`;
 
   const ws = new WebSocket(url, ['token', cleanKey]);
 
