@@ -15,9 +15,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"]
   },
-  "include": ["src", "src-tauri", "vite.config.*", "tailwind.config.*", "postcss.config.*"],
+  "include": ["src", "src-tauri", "vite.config.*", "tailwind.config.*", "postcss.config.*", "netlify"],
   "exclude": ["node_modules", "dist"]
 }
 
