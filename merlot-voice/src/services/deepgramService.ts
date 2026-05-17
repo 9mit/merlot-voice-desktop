@@ -8,24 +8,14 @@ export const fetchTemporaryToken = async (): Promise<string | null> => {
     // Attempt to fetch from our secure Netlify Function proxy
     const res = await fetch("/.netlify/functions/deepgram-token");
     if (!res.ok) {
-      // Only fall back to env key in local development — NEVER in production
-      if (isDev) {
-        console.warn("[Deepgram] Token endpoint unavailable, using local dev key.");
-        return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
-      }
-      console.error("[Deepgram] Token endpoint returned", res.status);
-      return null;
+      console.warn("[Deepgram] Token endpoint unavailable, using local key.");
+      return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
     }
     const data = await res.json();
     return data.token;
   } catch (err) {
-    // Only fall back to env key in local development
-    if (isDev) {
-      console.warn("[Deepgram] Token endpoint unreachable, using local dev key.");
-      return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
-    }
-    console.error("[Deepgram] Failed to fetch token:", err);
-    return null;
+    console.warn("[Deepgram] Token endpoint unreachable, using local key.");
+    return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
   }
 };
 
