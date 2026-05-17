@@ -104,6 +104,7 @@ function App() {
     if (isRecording) {
       stopRecording();
     } else {
+      clearTranscript();
       startRecording();
     }
   };
