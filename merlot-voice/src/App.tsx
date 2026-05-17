@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./index.css";
 import { useTranscription } from "./hooks/useTranscription";
@@ -110,13 +111,13 @@ function App() {
   };
 
   return (
-    <div className="relative flex h-[100dvh] overflow-hidden bg-gradient-to-br from-[#f0f4ff] via-[#e8efff] to-[#f5f3ff]">
+    <div className="relative flex h-[100dvh] overflow-hidden bg-gradient-to-br from-[#FAF8F5] via-[#FCFAF7] to-[#FAF6EE] select-none">
 
-      {/* Subtle decorative blurs */}
-      <div className="absolute top-[-15%] right-[-5%] w-[500px] h-[500px] bg-blue-200/30 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-200/20 rounded-full blur-[100px] pointer-events-none" />
+      {/* Subtle decorative champagne and gold blurs */}
+      <div className="absolute top-[-10%] right-[-5%] w-[450px] h-[450px] bg-[#C5A059]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-[380px] h-[380px] bg-[#0A2540]/3 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar (Cream system) */}
       <div className="relative z-20 hidden md:flex">
         <FileSidebar
           files={files}
@@ -132,131 +133,153 @@ function App() {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex flex-col overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col overflow-hidden h-full">
 
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 md:px-6 py-3 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shrink-0">
+        {/* Global Header (Developer's Black with Gold trim) */}
+        <header className="flex items-center justify-between px-5 md:px-7 py-3.5 bg-[#111111] border-b border-[#C5A059]/30 shrink-0 shadow-md">
           <div className="flex items-center gap-3">
-            {/* Mobile menu */}
-            <button className="md:hidden p-2 hover:bg-blue-50 rounded-lg text-slate-500" onClick={() => setMobileSidebarOpen(true)}>
+            {/* Mobile menu button */}
+            <button 
+              className="md:hidden p-2 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-colors" 
+              onClick={() => setMobileSidebarOpen(true)}
+              aria-label="Open navigation menu"
+            >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-md shadow-blue-200 border border-blue-500/20">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="p-2.5 bg-[#1E1E1E] rounded-xl border border-[#C5A059]/35 shadow-sm shadow-black flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-[#C5A059]" />
             </div>
             <div>
-              <h1 className="font-bold text-lg tracking-tight text-slate-800">
-                Merlot<span className="text-blue-600">Voice</span>
+              <h1 className="font-bold text-lg tracking-widest text-[#FAF8F5] editorial-sans uppercase flex items-center gap-1">
+                Merlot<span className="text-[#C5A059] font-normal">Voice</span>
               </h1>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-semibold hidden sm:inline">
-                Voice Notepad
+              <span className="text-[8px] uppercase tracking-[0.3em] text-slate-500 font-bold block">
+                Premium Dictation Suite
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             {isPTTMode && (
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-200">
-                <Keyboard className="w-3.5 h-3.5 text-blue-500" />
-                <span className="text-[10px] font-semibold text-slate-500">Alt+G</span>
-                <div className={`w-1.5 h-1.5 rounded-full ${pttStatus === "recording" ? "bg-red-500 animate-pulse" : pttStatus === "injecting" ? "bg-amber-500" : "bg-emerald-500"}`} />
+              <div className="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 bg-[#1E1E1E] rounded-full border border-[#C5A059]/25 shadow-sm">
+                <Keyboard className="w-3.5 h-3.5 text-[#C5A059]" />
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">PTT HOTKEY:</span>
+                <span className="text-[9px] font-bold text-white uppercase tracking-wider px-1.5 py-0.5 bg-[#0A2540] rounded-md border border-[#C5A059]/20 font-mono">Alt+G</span>
+                <div className={`w-1.5 h-1.5 rounded-full ${
+                  pttStatus === "recording" 
+                    ? "bg-red-500 animate-pulse" 
+                    : pttStatus === "injecting" 
+                      ? "bg-amber-500" 
+                      : "bg-[#C5A059]"
+                }`} />
               </div>
             )}
           </div>
         </header>
 
-        {/* Error Toast */}
+        {/* Global Error Banner */}
         {error && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 bg-red-50 text-red-700 text-xs font-medium rounded-full border border-red-200 shadow-lg animate-fade-in">
-            {error}
+          <div className="absolute top-18 left-1/2 -translate-x-1/2 z-30 px-6 py-3 bg-[#FAF6EE] text-[#111111] text-xs font-bold rounded-xl border border-[#C5A059] shadow-2xl animate-luxury-fade uppercase tracking-widest flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
+            <span>{error}</span>
           </div>
         )}
 
-        {/* Recording Indicator */}
+        {/* Standard Recording Banner */}
         {isRecording && pttStatus !== "recording" && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-red-200 shadow-lg animate-fade-in">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-xs font-semibold text-slate-700">Recording...</span>
+          <div className="absolute top-18 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 px-5 py-2.5 bg-[#111111] rounded-xl border border-[#C5A059]/40 shadow-2xl animate-luxury-fade">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-ping" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-red-400">Recording Audio Live</span>
           </div>
         )}
 
-        {/* Injecting indicator */}
+        {/* PTT Injection Banner */}
         {pttStatus === "injecting" && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-amber-200 shadow-lg animate-fade-in">
-            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-            <span className="text-xs font-semibold text-slate-700">Injecting text...</span>
+          <div className="absolute top-18 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5 px-5 py-2.5 bg-[#111111] rounded-xl border border-[#C5A059]/40 shadow-2xl animate-luxury-fade">
+            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[#C5A880]">Injecting Into Focused App</span>
           </div>
         )}
 
-        {/* Notepad Editor */}
-        <NotepadEditor
-          file={activeFile}
-          interimTranscript={interimTranscript}
-          isRecording={isRecording}
-          onContentChange={updateFileContent}
-          onCopy={handleCopy}
-          copied={copied}
-          onDownload={downloadFile}
-        />
+        {/* Notepad Editor Wrapper */}
+        <div className="flex-1 overflow-hidden relative">
+          <NotepadEditor
+            file={activeFile}
+            interimTranscript={interimTranscript}
+            isRecording={isRecording}
+            onContentChange={updateFileContent}
+            onCopy={handleCopy}
+            copied={copied}
+            onDownload={downloadFile}
+          />
+        </div>
 
-        {/* Control Dock */}
-        <div className="shrink-0 flex justify-center pb-4 md:pb-5 pt-2 px-4">
-          <div className="flex items-center gap-3 px-5 py-3 bg-white rounded-2xl border border-slate-200 shadow-lg shadow-blue-100/50">
+        {/* Luxury Control Dock (Developer's Black + Gold border) */}
+        <div className="shrink-0 flex justify-center pb-5 md:pb-6 pt-3 px-4 bg-gradient-to-t from-[#F3ECE0]/30 to-transparent">
+          <div className="flex items-center gap-4 px-6 py-3.5 bg-[#111111] rounded-2xl border border-[#C5A059]/35 shadow-xl shadow-black/20">
 
-            {/* Record Button */}
+            {/* Record / Stop Toggle (Royal Blue and Red active status) */}
             <button
               onClick={handleToggleRecording}
-              className={`relative w-14 h-14 rounded-full flex items-center justify-center border-[3px] transition-all duration-300 shadow-lg btn ${isRecording
-                ? "bg-gradient-to-br from-red-500 to-red-600 border-red-400 scale-95 animate-pulse-glow"
-                : "bg-gradient-to-br from-blue-500 to-blue-700 border-blue-400 hover:scale-105 hover:shadow-blue-300/50"
-                }`}
-              title={isRecording ? "Stop recording" : "Start recording"}
+              className={`relative w-14 h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 shadow-md luxury-btn ${
+                isRecording
+                  ? "bg-red-600 hover:bg-red-700 border-red-400 scale-95 animate-luxury-glow"
+                  : "bg-[#0A2540] hover:bg-[#C5A059] border-[#C5A059]/40 hover:scale-105 hover:shadow-[#C5A059]/10"
+              }`}
+              title={isRecording ? "Stop dictation" : "Start dictation"}
             >
               {isRecording ? (
-                <Square className="w-5 h-5 text-white fill-white" />
+                <Square className="w-4 h-4 text-white fill-white" />
               ) : (
-                <Mic className="w-6 h-6 text-white" />
+                <Mic className="w-5.5 h-5.5 text-white group-hover:text-[#111111]" />
               )}
             </button>
 
-            {/* Copy */}
+            {/* Premium Copy */}
             <button
               onClick={handleCopy}
               disabled={!activeFile?.content}
-              className="p-2.5 hover:bg-blue-50 rounded-xl text-slate-400 hover:text-blue-600 transition-all disabled:opacity-20 disabled:cursor-not-allowed btn"
-              title="Copy to clipboard"
+              className="p-3 hover:bg-[#1E1E1E] border border-transparent hover:border-[#C5A059]/20 rounded-xl text-[#C5A059] hover:text-[#FAF8F5] transition-all disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              title="Copy all note text"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4.5 h-4.5 text-emerald-500" /> : <Copy className="w-4.5 h-4.5" />}
             </button>
 
-            {/* Insert Text */}
+            {/* Direct Injection Control */}
             <button
               onClick={async () => {
                 if (!activeFile?.content) return;
                 setIsInserting(true);
                 await new Promise(r => setTimeout(r, 500));
-                try { await injectText(activeFile.content); setTimeout(() => setIsInserting(false), 200); }
-                catch { setIsInserting(false); }
+                try { 
+                  await injectText(activeFile.content); 
+                  setTimeout(() => setIsInserting(false), 200); 
+                } catch { 
+                  setIsInserting(false); 
+                }
               }}
               disabled={!activeFile?.content || isInserting}
-              className="p-2.5 hover:bg-blue-50 rounded-xl text-slate-400 hover:text-blue-600 transition-all disabled:opacity-20 disabled:cursor-not-allowed btn"
-              title="Insert into focused app"
+              className="p-3 hover:bg-[#1E1E1E] border border-transparent hover:border-[#C5A059]/20 rounded-xl text-[#C5A059] hover:text-[#FAF8F5] transition-all disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              title="Insert note text into currently focused application window"
             >
               {isInserting ? (
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4.5 h-4.5 border-2 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-4.5 h-4.5" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Sidebar overlay (Rich frosted backdrop) */}
       {mobileSidebarOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setMobileSidebarOpen(false)} />
-          <div className="relative z-10 animate-slide-in shadow-2xl">
+          <div 
+            className="absolute inset-0 bg-[#111111]/30 backdrop-blur-md transition-opacity duration-300" 
+            onClick={() => setMobileSidebarOpen(false)} 
+          />
+          <div className="relative z-10 animate-luxury-slide shadow-2xl h-full">
             <FileSidebar
               files={files}
               activeFileId={activeFileId}
