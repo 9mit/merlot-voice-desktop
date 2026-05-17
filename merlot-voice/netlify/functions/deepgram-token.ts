@@ -30,10 +30,15 @@ const handler: Handler = async (event: HandlerEvent) => {
     return { statusCode: 429, body: JSON.stringify({ error: "Too many requests. Please wait." }) };
   }
 
-  // Origin check — restrict to your own Netlify domain in production
-  const siteUrl = process.env.URL; // Netlify auto-sets this to your site URL
+  // Origin check — restrict to same-site requests or localhost
   const origin = event.headers.origin || event.headers.referer || "";
-  if (siteUrl && origin && !origin.includes("localhost") && !origin.startsWith(siteUrl)) {
+  const host = event.headers.host || "";
+  
+  const isLocal = origin.includes("localhost") || origin.includes("127.0.0.1") || origin.includes("tauri://localhost");
+  const isSameSite = host && origin.includes(host);
+
+  if (!isLocal && !isSameSite) {
+    console.warn(`[Auth] Blocked request from unauthorized origin: ${origin} (Host: ${host})`);
     return { statusCode: 403, body: JSON.stringify({ error: "Forbidden" }) };
   }
 
@@ -67,7 +72,7 @@ const handler: Handler = async (event: HandlerEvent) => {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-store, no-cache",
-        "Access-Control-Allow-Origin": siteUrl || "*",
+        "Access-Control-Allow-Origin": origin || "*",
       },
       body: JSON.stringify({ token: result.key }),
     };
