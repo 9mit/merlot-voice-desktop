@@ -17,7 +17,7 @@
     "jsx": "react-jsx",
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "src-tauri", "vite.config.*", "tailwind.config.*", "postcss.config.*", "netlify"],
+  "include": ["src", "src-tauri", "vite.config.*", "tailwind.config.*", "postcss.config.*", "api"],
   "exclude": ["node_modules", "dist"]
 }
 

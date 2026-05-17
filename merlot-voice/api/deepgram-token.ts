@@ -1,7 +1,7 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { DeepgramClient } from "@deepgram/sdk";
-import type { Handler, HandlerEvent } from "@netlify/functions";
 
-// Simple in-memory rate limiter (per Netlify function instance)
+// Simple in-memory rate limiter (per Vercel serverless function instance)
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
 const MAX_REQUESTS_PER_MINUTE = 10;
 
@@ -18,38 +18,39 @@ function isRateLimited(ip: string): boolean {
   return entry.count > MAX_REQUESTS_PER_MINUTE;
 }
 
-const handler: Handler = async (event: HandlerEvent) => {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET and POST
-  if (event.httpMethod !== "GET" && event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
+  if (req.method !== "GET" && req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   // Rate limiting by IP
-  const clientIp = event.headers["x-forwarded-for"]?.split(",")[0]?.trim() || event.headers["client-ip"] || "unknown";
+  const xForwardedFor = req.headers["x-forwarded-for"];
+  const clientIp = (Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor)?.split(",")[0]?.trim()
+    || (req.headers["x-real-ip"] as string)
+    || "unknown";
+
   if (isRateLimited(clientIp)) {
-    return { statusCode: 429, body: JSON.stringify({ error: "Too many requests. Please wait." }) };
+    return res.status(429).json({ error: "Too many requests. Please wait." });
   }
 
   // Origin check — restrict to same-site requests or localhost
-  const origin = event.headers.origin || event.headers.referer || "";
-  const host = event.headers.host || "";
-  
+  const origin = (req.headers.origin as string) || (req.headers.referer as string) || "";
+  const host = req.headers.host || "";
+
   const isLocal = origin.includes("localhost") || origin.includes("127.0.0.1") || origin.includes("tauri://localhost");
   const isSameSite = host && origin.includes(host);
 
   if (!isLocal && !isSameSite) {
     console.warn(`[Auth] Blocked request from unauthorized origin: ${origin} (Host: ${host})`);
-    return { statusCode: 403, body: JSON.stringify({ error: "Forbidden" }) };
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   const apiKey = process.env.DEEPGRAM_API_KEY;
   const projectId = process.env.DEEPGRAM_PROJECT_ID;
 
   if (!apiKey || !projectId) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Server configuration incomplete" }),
-    };
+    return res.status(500).json({ error: "Server configuration incomplete" });
   }
 
   try {
@@ -64,22 +65,14 @@ const handler: Handler = async (event: HandlerEvent) => {
 
     if (!result || !result.key) {
       console.error("Deepgram token error: No key returned");
-      return { statusCode: 500, body: JSON.stringify({ error: "Token generation failed" }) };
+      return res.status(500).json({ error: "Token generation failed" });
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store, no-cache",
-        "Access-Control-Allow-Origin": origin || "*",
-      },
-      body: JSON.stringify({ token: result.key }),
-    };
+    res.setHeader("Cache-Control", "no-store, no-cache");
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    return res.status(200).json({ token: result.key });
   } catch (err) {
     console.error("Token error:", err);
-    return { statusCode: 500, body: JSON.stringify({ error: "Internal error" }) };
+    return res.status(500).json({ error: "Internal error" });
   }
-};
-
-export { handler };
+}

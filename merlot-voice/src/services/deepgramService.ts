@@ -5,8 +5,8 @@ const isDev = import.meta.env.DEV;
 
 export const fetchTemporaryToken = async (): Promise<string | null> => {
   try {
-    // Attempt to fetch from our secure Netlify Function proxy
-    const res = await fetch("/.netlify/functions/deepgram-token");
+    // Attempt to fetch from our secure Vercel API proxy
+    const res = await fetch("/api/deepgram-token");
     if (!res.ok) {
       console.warn("[Deepgram] Token endpoint unavailable, using local key.");
       return import.meta.env.VITE_DEEPGRAM_API_KEY || null;
